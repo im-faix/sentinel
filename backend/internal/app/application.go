@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-
+	apirouter "github.com/im-faix/sentinel/backend/internal/api/router"
 	"github.com/im-faix/sentinel/backend/internal/config"
 	"github.com/im-faix/sentinel/backend/internal/logger"
 	"github.com/im-faix/sentinel/backend/internal/server"
@@ -29,23 +29,17 @@ func New() *Application {
 
 	log := logger.New(cfg.LogLevel)
 
-	router := chi.NewRouter()
+	apiRouter := apirouter.New()
 
-	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("Sentinel API"))
-	})
-
-	srv := server.New(cfg.Address(), router, log)
+	srv := server.New(cfg.Address(), apiRouter, log)
 
 	return &Application{
 		Config: cfg,
 		Logger: log,
 		Server: srv,
-		Router: router,
+		Router: apiRouter,
 	}
 }
-
 func (a *Application) Run() error {
 
 	go func() {
